@@ -2,41 +2,100 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title type="text">Recent Articles</title>
   <id>http://octocat-cafe.me/feed.atom</id>
-  <updated>2014-05-12T00:00:00Z</updated>
+  <updated>2014-03-15T00:00:00Z</updated>
   <link href="http://octocat-cafe.me/" />
   <link href="http://octocat-cafe.me/feed.atom" rel="self" />
   <generator>Werkzeug</generator>
   <entry xml:base="http://octocat-cafe.me/feed.atom">
-    <title type="text">The world is calling</title>
-    <id>http://octocat-cafe.me/blog/world.html</id>
-    <updated>2014-05-12T00:00:00Z</updated>
-    <published>2014-05-12T00:00:00Z</published>
-    <link href="http://octocat-cafe.me/blog/world.html" />
+    <title type="text">A Short Guide to Email Spoofing</title>
+    <id>http://octocat-cafe.me/blog/email-spoofing.html</id>
+    <updated>2014-03-15T00:00:00Z</updated>
+    <published>2014-03-15T00:00:00Z</published>
+    <link href="http://octocat-cafe.me/blog/email-spoofing.html" />
     <author>
       <name>Polina Soshnin</name>
     </author>
-    <content type="html">&lt;p&gt;here is the second blog post! :) :) :) &lt;/p&gt;
-&lt;p&gt;Lorem&lt;/p&gt;
-&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;c&quot;&gt;#ROUTES&lt;/span&gt;
-&lt;span class=&quot;nd&quot;&gt;@app.template_filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39;date&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;format_date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39;%B &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;%d&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;, %Y&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;strftime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    <content type="html">&lt;p&gt;This is a fun trick I learned that uses a few basic networking concepts. I didn't realize how easy it was to send spoof email via command line. Here's how:&lt;/p&gt;
+&lt;h4&gt;Basic idea:&lt;/h4&gt;
+&lt;p&gt;Establish a TCP connection to a mail server and use SMTP commands to send email from &quot;anyone&quot; to &quot;anyone&quot;. :) You'll see what I mean. &lt;/p&gt;
+&lt;h4&gt;Concepts:&lt;/h4&gt;
+&lt;p&gt;TCP, or the Transmission Control Protocol, is a transport layer protocol used for establishing logical communication between applications and different hosts that are not physically connected to one another. Applications can be ones running on your computer (a local host) or the internet (Gmail for example). In this case, I am using TCP to establish a connection from my linux account on a college server to a google mail server. SMTP is the Simple Mail Transfer Protocol that is the de facto standard for sending email across the internet. It's been around since 1982 and is very minimal-- to this day it will only support 7 bit ASCII characters, which amuses me when I think of multimedia email attachments these days. In this example I'm going to use telnet to manually send mail through an SMTP mail server. &lt;/p&gt;
+&lt;h4&gt;Step 1: Establish a TCP Connection&lt;/h4&gt;
+&lt;p&gt;In order to send SMTP commands to a mail server you need to know the host name of the mail server for your domain. My domain is wellesley.edu, so I'm going to first query the DNS for the MX record that holds information about my mail domain. &lt;/p&gt;
+&lt;p&gt;SSH into my linux account:&lt;/p&gt;
+&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ssh -Y psoshnin@cs.wellesley.edu
+psoshnin@cs.wellesley.edu&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;s password:
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;psoshnin@tempest~&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
 
-&lt;span class=&quot;nd&quot;&gt;@app.route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;#base URL&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;render_template&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39;index.html&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;posts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blog&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-&lt;span class=&quot;c&quot;&gt;#dynamic urls in flask&lt;/span&gt;
-&lt;span class=&quot;nd&quot;&gt;@app.route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39;/blog/&amp;lt;path:path&amp;gt;.html&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blog&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_post_or_404&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;render_template&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39;post.html&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;p&gt;Query DNS for the mail servers that deliver mail to wellesley.edu:&lt;/p&gt;
+&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;cp&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;psoshnin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;tempest&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; nslookup -type=MX wellesley.edu&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;Server:         149.130.10.16&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;Address:        149.130.10.16#53&lt;/span&gt;
 
-&lt;span class=&quot;nd&quot;&gt;@app.route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39;/feed.atom&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;feed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;feed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AtomFeed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;#39;Recent Articles&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-                    &lt;span class=&quot;n&quot;&gt;feed_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-                    &lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;url_root&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;</content>
+&lt;span class=&quot;x&quot;&gt;wellesley.edu   mail exchanger = 5 ALT2.ASPMX.L.GOOGLE.COM.&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;wellesley.edu   mail exchanger = 10 ASPMX2.GOOGLEMAIL.COM.&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;wellesley.edu   mail exchanger = 10 ASPMX3.GOOGLEMAIL.COM.&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;wellesley.edu   mail exchanger = 1 ASPMX.L.GOOGLE.COM.&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;wellesley.edu   mail exchanger = 5 ALT1.ASPMX.L.GOOGLE.COM.&lt;/span&gt;
+
+&lt;span class=&quot;cp&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;psoshnin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;tempest&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;From here you can see that Wellesley has 5 different mail servers through Google mail services. We need to pick one of them-- let's pick ALT2.ASPMX.L.GOOGLE.COM. We use telnet to establish the connection and use port 25 because it's a TCP connection:&lt;/p&gt;
+&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;cp&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;psoshnin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;tempest&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; telnet ALT2.ASPMX.L.GOOGLE.COM 25&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;Trying 173.194.65.27...&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;Connected to ALT2.ASPMX.L.GOOGLE.COM.&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;Escape character is &amp;#39;^]&amp;#39;.&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;220 mx.google.com ESMTP u6si42550271een.213 -gsmtp&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h4&gt;Step two: Use SMTP commands to send an email&lt;/h4&gt;
+&lt;p&gt;Yay we're connected! Now here's where the fun begins. Let's enter in some commands to send a message. A basic message for SMTP needs the following:&lt;/p&gt;
+&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;n&quot;&gt;MAIL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Sender&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sending&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;RCPT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TO&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Receiver&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;receiving&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;DATA&lt;/span&gt;
+&lt;span class=&quot;nl&quot;&gt;FROM:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;an&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nl&quot;&gt;T0:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;an&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;address&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nl&quot;&gt;SUBJECT:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;email&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;subject&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Body&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;QUIT&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Note that there's a period [.] at the end. You will need that. Let's try this!&lt;/p&gt;
+&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;cp&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;psoshnin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;tempest&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;x&quot;&gt; telnet ALT2.ASPMX.L.GOOGLE.COM 25&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;Trying 173.194.65.27...&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;Connected to ALT2.ASPMX.L.GOOGLE.COM.&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;Escape character is &amp;#39;^]&amp;#39;.&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;220 mx.google.com ESMTP u6si42550271een.213 -gsmtp&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;HELO psoshnin@wellesley.edu&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;250 mx.google.com at your service&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;MAIL FROM: &amp;lt;god@heaven.onearth&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;250 2.1.0 OK u6si4550271een.213 -gsmtp&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;RCPT TO: &amp;lt;me@polina.io&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;250 2.1.0 OK u6si42250271een.213 -gsmtp&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;DATA&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;350 Go ahead u6si42550271een.213 -gsmtp&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;FROM: God &amp;lt;god@heaven.onearth&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;TO: Earthling &amp;lt;why@hello.earthling&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;SUBJECT: Hello world!&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;Hello world! I should visit more.&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;-God&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;250 2.0.0 OK 1392756346 u6si42550271een.213 -gsmtp&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;QUIT&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;221 2.0.0 closing connection u6si42550271een.213 -gsmtp&lt;/span&gt;
+&lt;span class=&quot;x&quot;&gt;Connection closed by foreign host.&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;psoshnin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;tempest&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;~&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;x&quot;&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;And there you have it. Note: you might need to check your spam folder. &lt;/p&gt;
+&lt;p&gt;&lt;img alt=&quot;Alt text&quot; src=&quot;/static/helloworld.png&quot; /&gt;&lt;/p&gt;</content>
   </entry>
 </feed>

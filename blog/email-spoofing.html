@@ -1,0 +1,124 @@
+<html>	
+
+<head>
+
+	
+
+<title>A Short Guide to Email Spoofing  </title>
+
+<!-- Stylesheets -->
+	<link rel="stylesheet" href="/static/css/post.css">
+
+
+
+	<!-- Stylesheets -->
+	<link rel="stylesheet" href="/static/css/base.css">
+	<link rel="stylesheet" href="/static/css/syntax.css">
+
+	<!-- Atom Feed -->
+	<link href="/feed.atom"
+	  rel="alternate"
+	  title="Recent Changes" 
+	  type="application/atom+xml">
+
+</head>
+
+<body>
+
+
+	<!-- Header -->
+	<div id="header">
+		<h1> A Short Guide to Email Spoofing</h1>
+			
+		<h3 id="date"> March 15, 2014</h3>
+	</div>
+	<!-- Content -->
+	<div id="content">
+		<p>This is a fun trick I learned that uses a few basic networking concepts. I didn't realize how easy it was to send spoof email via command line. Here's how:</p>
+<h4>Basic idea:</h4>
+<p>Establish a TCP connection to a mail server and use SMTP commands to send email from "anyone" to "anyone". :) You'll see what I mean. </p>
+<h4>Concepts:</h4>
+<p>TCP, or the Transmission Control Protocol, is a transport layer protocol used for establishing logical communication between applications and different hosts that are not physically connected to one another. Applications can be ones running on your computer (a local host) or the internet (Gmail for example). In this case, I am using TCP to establish a connection from my linux account on a college server to a google mail server. SMTP is the Simple Mail Transfer Protocol that is the de facto standard for sending email across the internet. It's been around since 1982 and is very minimal-- to this day it will only support 7 bit ASCII characters, which amuses me when I think of multimedia email attachments these days. In this example I'm going to use telnet to manually send mail through an SMTP mail server. </p>
+<h4>Step 1: Establish a TCP Connection</h4>
+<p>In order to send SMTP commands to a mail server you need to know the host name of the mail server for your domain. My domain is wellesley.edu, so I'm going to first query the DNS for the MX record that holds information about my mail domain. </p>
+<p>SSH into my linux account:</p>
+<div class="codehilite"><pre><span class="nv">$ </span>ssh -Y psoshnin@cs.wellesley.edu
+psoshnin@cs.wellesley.edu<span class="err">&#39;</span>s password:
+<span class="o">[</span>psoshnin@tempest~<span class="o">]</span>
+</pre></div>
+
+
+<p>Query DNS for the mail servers that deliver mail to wellesley.edu:</p>
+<div class="codehilite"><pre><span class="cp">[</span><span class="nx">psoshnin</span><span class="p">@</span><span class="nx">tempest</span><span class="err">~</span><span class="cp">]</span><span class="x"> nslookup -type=MX wellesley.edu</span>
+<span class="x">Server:         149.130.10.16</span>
+<span class="x">Address:        149.130.10.16#53</span>
+
+<span class="x">wellesley.edu   mail exchanger = 5 ALT2.ASPMX.L.GOOGLE.COM.</span>
+<span class="x">wellesley.edu   mail exchanger = 10 ASPMX2.GOOGLEMAIL.COM.</span>
+<span class="x">wellesley.edu   mail exchanger = 10 ASPMX3.GOOGLEMAIL.COM.</span>
+<span class="x">wellesley.edu   mail exchanger = 1 ASPMX.L.GOOGLE.COM.</span>
+<span class="x">wellesley.edu   mail exchanger = 5 ALT1.ASPMX.L.GOOGLE.COM.</span>
+
+<span class="cp">[</span><span class="nx">psoshnin</span><span class="p">@</span><span class="nx">tempest</span><span class="err">~</span><span class="cp">]</span><span class="x"></span>
+</pre></div>
+
+
+<p>From here you can see that Wellesley has 5 different mail servers through Google mail services. We need to pick one of them-- let's pick ALT2.ASPMX.L.GOOGLE.COM. We use telnet to establish the connection and use port 25 because it's a TCP connection:</p>
+<div class="codehilite"><pre><span class="cp">[</span><span class="nx">psoshnin</span><span class="p">@</span><span class="nx">tempest</span><span class="err">~</span><span class="cp">]</span><span class="x"> telnet ALT2.ASPMX.L.GOOGLE.COM 25</span>
+<span class="x">Trying 173.194.65.27...</span>
+<span class="x">Connected to ALT2.ASPMX.L.GOOGLE.COM.</span>
+<span class="x">Escape character is &#39;^]&#39;.</span>
+<span class="x">220 mx.google.com ESMTP u6si42550271een.213 -gsmtp</span>
+</pre></div>
+
+
+<h4>Step two: Use SMTP commands to send an email</h4>
+<p>Yay we're connected! Now here's where the fun begins. Let's enter in some commands to send a message. A basic message for SMTP needs the following:</p>
+<div class="codehilite"><pre><span class="n">MAIL</span> <span class="n">FROM</span><span class="o">:</span> <span class="n">Sender</span> <span class="o">&lt;</span><span class="n">sending</span><span class="err">@</span><span class="n">email</span><span class="p">.</span><span class="n">address</span><span class="o">&gt;</span>
+<span class="n">RCPT</span> <span class="n">TO</span><span class="o">:</span> <span class="n">Receiver</span> <span class="o">&lt;</span><span class="n">receiving</span><span class="err">@</span><span class="n">email</span><span class="p">.</span><span class="n">address</span><span class="o">&gt;</span>
+<span class="n">DATA</span>
+<span class="nl">FROM:</span> <span class="o">&lt;</span><span class="n">from</span><span class="err">@</span><span class="n">an</span><span class="p">.</span><span class="n">address</span><span class="o">&gt;</span>
+<span class="nl">T0:</span> <span class="o">&lt;</span><span class="n">to</span><span class="err">@</span><span class="n">an</span><span class="p">.</span><span class="n">address</span><span class="o">&gt;</span>
+<span class="nl">SUBJECT:</span> <span class="n">email</span> <span class="n">subject</span>
+<span class="n">Body</span> <span class="n">of</span> <span class="n">email</span>
+<span class="p">.</span>
+<span class="n">QUIT</span>
+</pre></div>
+
+
+<p>Note that there's a period [.] at the end. You will need that. Let's try this!</p>
+<div class="codehilite"><pre><span class="cp">[</span><span class="nx">psoshnin</span><span class="p">@</span><span class="nx">tempest</span><span class="err">~</span><span class="cp">]</span><span class="x"> telnet ALT2.ASPMX.L.GOOGLE.COM 25</span>
+<span class="x">Trying 173.194.65.27...</span>
+<span class="x">Connected to ALT2.ASPMX.L.GOOGLE.COM.</span>
+<span class="x">Escape character is &#39;^]&#39;.</span>
+<span class="x">220 mx.google.com ESMTP u6si42550271een.213 -gsmtp</span>
+<span class="x">HELO psoshnin@wellesley.edu</span>
+<span class="x">250 mx.google.com at your service</span>
+<span class="x">MAIL FROM: &lt;god@heaven.onearth&gt;</span>
+<span class="x">250 2.1.0 OK u6si4550271een.213 -gsmtp</span>
+<span class="x">RCPT TO: &lt;me@polina.io&gt;</span>
+<span class="x">250 2.1.0 OK u6si42250271een.213 -gsmtp</span>
+<span class="x">DATA</span>
+<span class="x">350 Go ahead u6si42550271een.213 -gsmtp</span>
+<span class="x">FROM: God &lt;god@heaven.onearth&gt;</span>
+<span class="x">TO: Earthling &lt;why@hello.earthling&gt;</span>
+<span class="x">SUBJECT: Hello world!</span>
+<span class="x">Hello world! I should visit more.</span>
+<span class="x">-God</span>
+<span class="x">.</span>
+<span class="x">250 2.0.0 OK 1392756346 u6si42550271een.213 -gsmtp</span>
+<span class="x">QUIT</span>
+<span class="x">221 2.0.0 closing connection u6si42550271een.213 -gsmtp</span>
+<span class="x">Connection closed by foreign host.</span>
+<span class="cp">[</span><span class="nx">psoshnin</span><span class="p">@</span><span class="nx">tempest</span><span class="err">~</span><span class="cp">]</span><span class="x"></span>
+</pre></div>
+
+
+<p>And there you have it. Note: you might need to check your spam folder. </p>
+<p><img alt="Alt text" src="/static/helloworld.png" /></p>
+	</div>
+
+
+</body>
+
+</html>

@@ -79,8 +79,31 @@
     #the python file that will show my routes, Flask instance, and generate my static files 
     + plus any additional python files for adding functionality</p>
 <p>It's pretty simple. If you take a look at the file structure of a Rails app, it's much much more complicated. I found when first learning about web development it was a easier to start off with something like Flask to get a better understanding of the kind of functionality that needs to go into a web application before diving into the Rails file structure. </p>
-<p>Hooking into Github, things to keep in mind</p>
-<p>Site must be on the gh-pages branch. Stored in a Github repo you can clone locally.</p>
+<p>Notes:</p>
+<p>Running Flask locally: 
+    polina: static_site *$ python generator.py
+    * Running on http://127.0.0.1:8000/</p>
+<p>Generating your Frozen instance:
+    polina: static_site *$ python generator.py build</p>
+<p>Running your freezer instance locally: 
+    polina: build (master)*$ python -mSimpleHTTPServer 8001
+    Serving HTTP on 0.0.0.0 port 8001 ...</p>
+<p>Pushing your static site to Github pages: </p>
+<div class="codehilite"><pre><span class="n">polina</span><span class="o">:</span> <span class="n">build</span> <span class="o">(</span><span class="n">master</span><span class="o">)*</span><span class="n">$</span> <span class="n">git</span> <span class="n">add</span> <span class="o">-</span><span class="n">A</span>
+<span class="n">polina</span><span class="o">:</span> <span class="n">build</span> <span class="o">(</span><span class="n">master</span><span class="o">)*</span><span class="n">$</span> <span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;adding blog post&quot;</span>
+<span class="o">[</span><span class="n">master</span> <span class="mi">78</span><span class="n">e2e97</span><span class="o">]</span> <span class="n">adding</span> <span class="n">blog</span> <span class="n">post</span>
+ <span class="mi">3</span> <span class="n">files</span> <span class="n">changed</span><span class="o">,</span> <span class="mi">151</span> <span class="n">insertions</span><span class="o">(+)</span>
+ <span class="n">create</span> <span class="n">mode</span> <span class="mi">100644</span> <span class="n">blog</span><span class="o">/</span><span class="n">setting</span><span class="o">-</span><span class="n">up</span><span class="o">-</span><span class="k">this</span><span class="o">-</span><span class="n">site</span><span class="o">.</span><span class="na">html</span>
+<span class="n">polina</span><span class="o">:</span> <span class="n">build</span> <span class="o">(</span><span class="n">master</span><span class="o">)</span><span class="n">$</span> <span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="n">master</span>
+<span class="n">Counting</span> <span class="n">objects</span><span class="o">:</span> <span class="mi">10</span><span class="o">,</span> <span class="n">done</span><span class="o">.</span>
+<span class="n">Delta</span> <span class="n">compression</span> <span class="n">using</span> <span class="n">up</span> <span class="n">to</span> <span class="mi">4</span> <span class="n">threads</span><span class="o">.</span>
+<span class="n">Compressing</span> <span class="n">objects</span><span class="o">:</span> <span class="mi">100</span><span class="o">%</span> <span class="o">(</span><span class="mi">6</span><span class="o">/</span><span class="mi">6</span><span class="o">),</span> <span class="n">done</span><span class="o">.</span>
+<span class="n">Writing</span> <span class="n">objects</span><span class="o">:</span> <span class="mi">100</span><span class="o">%</span> <span class="o">(</span><span class="mi">6</span><span class="sr">/6), 3.93 KiB | 0 bytes/s</span><span class="o">,</span> <span class="n">done</span><span class="o">.</span>
+<span class="n">Total</span> <span class="mi">6</span> <span class="o">(</span><span class="n">delta</span> <span class="mi">3</span><span class="o">),</span> <span class="n">reused</span> <span class="mi">0</span> <span class="o">(</span><span class="n">delta</span> <span class="mi">0</span><span class="o">)</span>
+<span class="n">To</span> <span class="n">https</span><span class="o">://</span><span class="n">github</span><span class="o">.</span><span class="na">com</span><span class="sr">/polinadotio/</span><span class="n">polinadotio</span><span class="o">.</span><span class="na">github</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">git</span>
+   <span class="mi">7</span><span class="n">abfa60</span><span class="o">..</span><span class="mi">78</span><span class="n">e2e97</span>  <span class="n">master</span> <span class="o">-&gt;</span> <span class="n">master</span>
+<span class="n">polina</span><span class="o">:</span> <span class="n">build</span> <span class="o">(</span><span class="n">master</span><span class="o">)</span><span class="n">$</span>
+</pre></div>
 	</div>
 
 

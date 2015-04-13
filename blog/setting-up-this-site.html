@@ -1,0 +1,89 @@
+<html>	
+
+<head>
+
+	
+
+<title>Creating a blogging site with Flask and Github Pages  </title>
+
+<!-- Stylesheets -->
+	<link rel="stylesheet" href="/static/css/post.css">
+
+
+
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="static/favicon.ico" type="image/x-icon">
+
+	<!-- Stylesheets -->
+	<link rel="stylesheet" href="/static/css/base.css">
+	<link rel="stylesheet" href="/static/css/syntax.css">
+
+	<!-- Atom Feed -->
+	<link href="/feed.atom"
+	  rel="alternate"
+	  title="Recent Changes" 
+	  type="application/atom+xml">
+
+</head>
+
+<body>
+
+
+	<!-- Header -->
+	<div id="header">
+		<h1> Creating a blogging site with Flask and Github Pages</h1>
+			
+		<h3 id="date"> March 15, 2014</h3>
+	</div>
+	<!-- Content -->
+	<div id="content">
+		<p>There are many ways to go about hosting a personal blog/landing page. One of my favorite is via Github pages. It's free and there are options just as Jekyl or Octopress to create an out of the box site for you. There's also the option of rolling your own to deploy on Github pages, which I'll touch on.</p>
+<p>http://jekyllrb.com/</p>
+<p>The one main thing you need to take into consideration when making a site for Github pages is that it needs to be a static site. This means the site is composed entirely of HTML, CSS, and JavaScript and it needs to be able to be hosted without any server-side software other than a traditional web server. There's no database you can hook into or Python code on the server side. So how would you go about this? At first it seems like you could just manually create all of your HTML/CSS/JS files yourself and then just commit them, but that's a pretty tedious endeavor and pretty disorganized.</p>
+<p>What we need ideally is some way of gracefully handling two issues that web frameworks are meant to solve: routing and templates. In addition to that, we'll need to find a better way of generating these files and pushing the static content to Github. The reason using a web framework in general is a good idea is because they will handle HTTP reqeusts and responses for us, which will be handy. Some web frameworks also have certain architectual patterns built in as well, such as the MVC pattern in Django and Rails. </p>
+<p>Routing and Templates</p>
+<p>The two big issues that come when building a web application are: how do you map the requested URL from the browser to the code that handles it (routes), and how do we create HTML dynamically (templates)? Those are the two questions we'll need an answer to, and every web framework handles it slightly differenty. </p>
+<p>That's where Flask comes in. Flask is a python microframework for developing web applications, and in my opinion it's a great way to play around with python and the web without having the overhead that comes with learning a heavyweight framework such as Rails or Django. Flask works like other Python web frameworks work: it receives HTTP requests, dispatches code that generates HTML, and creates an HTTP response with that content. This is how all major server-side frameworks work (excluding JavaScript frameworks).</p>
+<p>Flask handles routes by hooking up a function to a requested URL via a route() decorator. Here's an example of routing to the base URL:</p>
+<div class="codehilite"><pre><span class="err">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="sc">&#39;/&#39;</span><span class="p">)</span> <span class="err">#</span><span class="n">base</span> <span class="n">URL</span>
+<span class="n">def</span> <span class="n">index</span><span class="p">()</span><span class="o">:</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="err">&#39;</span><span class="n">index</span><span class="p">.</span><span class="n">html</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">posts</span><span class="o">=</span> <span class="n">blog</span><span class="p">.</span><span class="n">posts</span><span class="p">)</span>
+</pre></div>
+
+
+<p>Flask also lets you create dynamic URLs:</p>
+<div class="codehilite"><pre><span class="err">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="err">&#39;</span><span class="o">/</span><span class="n">blog</span><span class="o">/&lt;</span><span class="n">path</span><span class="o">:</span><span class="n">path</span><span class="o">&gt;</span><span class="p">.</span><span class="n">html</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="n">def</span> <span class="n">post</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">post</span> <span class="o">=</span> <span class="n">blog</span><span class="p">.</span><span class="n">get_post_or_404</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="err">&#39;</span><span class="n">post</span><span class="p">.</span><span class="n">html</span><span class="err">&#39;</span><span class="p">,</span> <span class="n">post</span><span class="o">=</span> <span class="n">post</span><span class="p">)</span>
+</pre></div>
+
+
+<p>That solves our routing issue. Next up, Flask uses Jinja2 for templating. One great thing about Jinja2 is that it will cache your templates so that subsequent requests with the exact same arguments are returned from the cache instead of re-rendered. </p>
+<p>Flask lets us create a site without having to worry about routing or templating, but what about generating static content? We will need to a way to make a "static site generator". Many of those exist, you can take a look at them here:</p>
+<p>https://www.staticgen.com/</p>
+<p>But we want a way to generate our own set of files from Flask. Can we do it? Yes!</p>
+<p>Frozen Flask, http://pythonhosted.org/Frozen-Flask/ is a Flask extension that "freezes" your flask application into a set of static files. The purpose of my application will be to show a list of blog posts and a little bit about me on the home page. Flask is very flexible when it comes to structuring files, so here's how I went ahead and initially organized them:</p>
+<p>blogging-site
+    /build 
+        #this is my build directly where I'm storing my Freezer() instance of my flask app and pushing this to github pages
+    /posts
+        #this is where my posts will be stored, in markdown
+    /static
+        #where my CSS files live
+    /templates
+        #where my HTML templates live
+    CNAME #place to put my IP address for my site
+    generator.py 
+    #the python file that will show my routes, Flask instance, and generate my static files 
+    + plus any additional python files for adding functionality</p>
+<p>It's pretty simple. If you take a look at the file structure of a Rails app, it's much much more complicated. I found when first learning about web development it was a easier to start off with something like Flask to get a better understanding of the kind of functionality that needs to go into a web application before diving into the Rails file structure. </p>
+<p>Hooking into Github, things to keep in mind</p>
+<p>Site must be on the gh-pages branch. Stored in a Github repo you can clone locally.</p>
+	</div>
+
+
+</body>
+
+</html>

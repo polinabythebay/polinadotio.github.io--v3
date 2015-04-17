@@ -1,12 +1,14 @@
 <html>	
 
 <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	
 
 <!-- Stylesheets -->
-	<link rel="stylesheet" href="/static/css/index.css">
-
+	<!-- <link rel="stylesheet" href="/static/css/index.css"> -->
+	<!-- <link rel="stylesheet" href="/static/css/blog.css"> -->
 
 
 	<!-- Favicon -->
@@ -14,8 +16,11 @@
 	<link rel="icon" href="static/favicon.ico" type="image/x-icon">
 
 	<!-- Stylesheets -->
-	<link rel="stylesheet" href="/static/css/base.css">
+	<!-- <link rel="stylesheet" href="/static/css/base.css"> -->
 	<link rel="stylesheet" href="/static/css/syntax.css">
+	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+	<link rel="stylesheet" href="/static/css/blog.css">
 
 	<!-- Atom Feed -->
 	<link href="/feed.atom"
@@ -28,8 +33,34 @@
 <body>
 
 
+<!-- <div id="content">
+		
+	</div> -->
 
-	<img src="static/cat_butterfly.png" alt="Cat Butterfly" style="width:304px;height:228px">
+
+<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+        <div class="header">
+            <h1 class="brand-title"></h1>
+            <h2 class="brand-tagline">Polina Soshnin</h2>
+
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a class="pure-button" href="/">Posts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="pure-button" href="/">Projects</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+    
+
+
+	<!-- <img src="static/cat_butterfly.png" alt="Cat Butterfly" style="width:304px;height:228px">
 
 	<div id="header">
 		<h1>  </h1>
@@ -50,7 +81,7 @@
 		
 		<ul>
 			<li>Frozen Flask: static site generator, hosted with Github pages. Powers this site :) </li>
-			<!-- <li>Rails Application: Polling, data visualization, lots of Rails awesomeness</li>
+			<li>Rails Application: Polling, data visualization, lots of Rails awesomeness</li>
 			<li>Rails Application: my first ecommerce site, using stripe</li>
 			<li>Ember.js</li>
 			<li>Sinatra- lightweight ruby web framework</li>
@@ -61,12 +92,39 @@
 			<li>iOS app: My first swift app, a tip calculator. Uses basic swift model + Apple best practices for UI/UX </li>
 			<li>iOS app: how I created my first simple game</li>
 			<li>My RubyGem library</li> -->
-		</ul>
+	<!-- 	</ul>
 
-		</div>
+		</div> --> 
 
-	<div id="posts">
+<!-- 	<div id="posts">
 		<h4> Blog posts </h4>
+		
+			<div class="post">
+				<span class="post-date"> April 16, 2015</span>
+				<a href="/blog/setting-up-this-site.html " class="post-title">
+					Creating a blogging site with Flask and Github Pages 
+
+				</a>
+			</div>	
+
+		
+			<div class="post">
+				<span class="post-date"> March 20, 2015</span>
+				<a href="/blog/my-first-pull-request.html " class="post-title">
+					My first pull request notes on getting started with open source 
+
+				</a>
+			</div>	
+
+		
+			<div class="post">
+				<span class="post-date"> February 12, 2015</span>
+				<a href="/blog/ios-dev-01.html " class="post-title">
+					Learning iOS Development 
+
+				</a>
+			</div>	
+
 		
 			<div class="post">
 				<span class="post-date"> March 15, 2014</span>
@@ -77,27 +135,84 @@
 			</div>	
 
 		
-			<div class="post">
-				<span class="post-date"> March 15, 2014</span>
-				<a href="/blog/ios-dev-01.html " class="post-title">
-					Learning iOS Development 
+	</div>	 -->
 
-				</a>
-			</div>	
+	<div class="content pure-u-1 pure-u-md-3-4">
+        <div>
+            <!-- A wrapper for all the blog posts -->
+            <div class="posts">
+                <h1 class="content-subhead">Blog Posts</h1>
 
-		
-			<div class="post">
-				<span class="post-date"> March 15, 2014</span>
-				<a href="/blog/setting-up-this-site.html " class="post-title">
-					Creating a blogging site with Flask and Github Pages 
+                <!-- A single blog post -->
+                
+                <section class="post">
+                    <header class="post-header">
 
-				</a>
-			</div>	
+                        <h2 class="post-title"><a href="/blog/setting-up-this-site.html ">Creating a blogging site with Flask and Github Pages</a></h2>
+                        <!-- <a href="/blog/setting-up-this-site.html " class="post-title"> -->
 
-		
-	</div>	
+                        <p class="post-meta">
+                            April 16, 2015
+                        </p>
+                    </header>
+  
+                </section>
+                
+                <section class="post">
+                    <header class="post-header">
+
+                        <h2 class="post-title"><a href="/blog/my-first-pull-request.html ">My first pull request notes on getting started with open source</a></h2>
+                        <!-- <a href="/blog/my-first-pull-request.html " class="post-title"> -->
+
+                        <p class="post-meta">
+                            March 20, 2015
+                        </p>
+                    </header>
+  
+                </section>
+                
+                <section class="post">
+                    <header class="post-header">
+
+                        <h2 class="post-title"><a href="/blog/ios-dev-01.html ">Learning iOS Development</a></h2>
+                        <!-- <a href="/blog/ios-dev-01.html " class="post-title"> -->
+
+                        <p class="post-meta">
+                            February 12, 2015
+                        </p>
+                    </header>
+  
+                </section>
+                
+                <section class="post">
+                    <header class="post-header">
+
+                        <h2 class="post-title"><a href="/blog/email-spoofing.html ">A Short Guide to Email Spoofing</a></h2>
+                        <!-- <a href="/blog/email-spoofing.html " class="post-title"> -->
+
+                        <p class="post-meta">
+                            March 15, 2014
+                        </p>
+                    </header>
+  
+                </section>
+                
+            </div>
+           
+        </div>
+    </div>
 
 
+
+			<div class="footer">
+			<div class="pure-menu pure-menu-horizontal">
+			    <ul>
+			        <li class="pure-menu-item"><a href="http://purecss.io/" class="pure-menu-link">About</a></li>
+			        <li class="pure-menu-item"><a href="http://twitter.com/yuilibrary/" class="pure-menu-link">Twitter</a></li>
+			        <li class="pure-menu-item"><a href="http://github.com/yahoo/pure/" class="pure-menu-link">GitHub</a></li>
+			    </ul>
+			</div>
+			</div>
 
 </body>
 

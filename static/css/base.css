@@ -5,6 +5,12 @@ body {
     /*background-color: #F8F8FF*/
 }
 
+/*Lets my images resize themselves to fit the div container*/
+img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
 #container { margin: 50px auto 10px auto; }
 
 h1, h2 {

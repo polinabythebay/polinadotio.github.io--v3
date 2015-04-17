@@ -2,10 +2,134 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title type="text">Recent Articles</title>
   <id>http://octocat-cafe.me/feed.atom</id>
-  <updated>2014-03-15T00:00:00Z</updated>
+  <updated>2015-04-16T00:00:00Z</updated>
   <link href="http://octocat-cafe.me/" />
   <link href="http://octocat-cafe.me/feed.atom" rel="self" />
   <generator>Werkzeug</generator>
+  <entry xml:base="http://octocat-cafe.me/feed.atom">
+    <title type="text">Creating a blogging site with Flask and Github Pages</title>
+    <id>http://octocat-cafe.me/blog/setting-up-this-site.html</id>
+    <updated>2015-04-16T00:00:00Z</updated>
+    <published>2015-04-16T00:00:00Z</published>
+    <link href="http://octocat-cafe.me/blog/setting-up-this-site.html" />
+    <author>
+      <name>Polina Soshnin</name>
+    </author>
+    <content type="html">&lt;p&gt;There are many ways to go about hosting a personal blog/landing page. One of my favorite is via Github pages. It's free and there are options just as Jekyl or Octopress to create an out of the box site for you. There's also the option of rolling your own to deploy on Github pages, which I'll touch on.&lt;/p&gt;
+&lt;p&gt;http://jekyllrb.com/&lt;/p&gt;
+&lt;p&gt;The one main thing you need to take into consideration when making a site for Github pages is that it needs to be a static site. This means the site is composed entirely of HTML, CSS, and JavaScript and it needs to be able to be hosted without any server-side software other than a traditional web server. There's no database you can hook into or Python code on the server side. So how would you go about this? At first it seems like you could just manually create all of your HTML/CSS/JS files yourself and then just commit them, but that's a pretty tedious endeavor and pretty disorganized.&lt;/p&gt;
+&lt;p&gt;What we need ideally is some way of gracefully handling two issues that web frameworks are meant to solve: routing and templates. In addition to that, we'll need to find a better way of generating these files and pushing the static content to Github. The reason using a web framework in general is a good idea is because they will handle HTTP reqeusts and responses for us, which will be handy. Some web frameworks also have certain architectual patterns built in as well, such as the MVC pattern in Django and Rails. &lt;/p&gt;
+&lt;p&gt;Routing and Templates&lt;/p&gt;
+&lt;p&gt;The two big issues that come when building a web application are: how do you map the requested URL from the browser to the code that handles it (routes), and how do we create HTML dynamically (templates)? Those are the two questions we'll need an answer to, and every web framework handles it slightly differenty. &lt;/p&gt;
+&lt;p&gt;That's where Flask comes in. Flask is a python microframework for developing web applications, and in my opinion it's a great way to play around with python and the web without having the overhead that comes with learning a heavyweight framework such as Rails or Django. Flask works like other Python web frameworks work: it receives HTTP requests, dispatches code that generates HTML, and creates an HTTP response with that content. This is how all major server-side frameworks work (excluding JavaScript frameworks).&lt;/p&gt;
+&lt;p&gt;Flask handles routes by hooking up a function to a requested URL via a route() decorator. Here's an example of routing to the base URL:&lt;/p&gt;
+&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;base&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;URL&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;render_template&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;posts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blog&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Flask also lets you create dynamic URLs:&lt;/p&gt;
+&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blog&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blog&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_post_or_404&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;render_template&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;That solves our routing issue. Next up, Flask uses Jinja2 for templating. One great thing about Jinja2 is that it will cache your templates so that subsequent requests with the exact same arguments are returned from the cache instead of re-rendered. &lt;/p&gt;
+&lt;p&gt;Flask lets us create a site without having to worry about routing or templating, but what about generating static content? We will need to a way to make a &quot;static site generator&quot;. Many of those exist, you can take a look at them here:&lt;/p&gt;
+&lt;p&gt;https://www.staticgen.com/&lt;/p&gt;
+&lt;p&gt;But we want a way to generate our own set of files from Flask. Can we do it? Yes!&lt;/p&gt;
+&lt;p&gt;Frozen Flask, http://pythonhosted.org/Frozen-Flask/ is a Flask extension that &quot;freezes&quot; your flask application into a set of static files. The purpose of my application will be to show a list of blog posts and a little bit about me on the home page. Flask is very flexible when it comes to structuring files, so here's how I went ahead and initially organized them:&lt;/p&gt;
+&lt;p&gt;blogging-site&lt;/p&gt;
+&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;err&quot;&gt;/build &lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;my&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;build&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;directly&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;I&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;storing&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;my&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Freezer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;instance&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;my&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;flask&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;app&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;pushing&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;github&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;pages&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;posts&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;is&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;my&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;posts&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;will&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;be&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;stored&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;markdown&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;static&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;my&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;CSS&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;files&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;live&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;templates&lt;/span&gt;
+    &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;where&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;my&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;HTML&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;templates&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;live&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;CNAME&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;place&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;put&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;my&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;IP&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;address&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;my&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;site&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;generator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;py&lt;/span&gt; 
+&lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;the&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;python&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;that&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;will&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;show&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;my&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;routes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Flask&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;instance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;generate&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;my&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;files&lt;/span&gt; 
+&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;plus&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;any&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;additional&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;python&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;files&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;adding&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;functionality&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;It's pretty simple. If you take a look at the file structure of a Rails app, it's much much more complicated. I found when first learning about web development it was a easier to start off with something like Flask to get a better understanding of the kind of functionality that needs to go into a web application before diving into the Rails file structure. &lt;/p&gt;
+&lt;p&gt;Notes:&lt;/p&gt;
+&lt;p&gt;Running Flask locally: &lt;/p&gt;
+&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;n&quot;&gt;polina&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;static_site&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;python&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;generator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;py&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Running&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;on&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;://&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;127.0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;8000&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Generating your Frozen instance:&lt;/p&gt;
+&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;n&quot;&gt;polina&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;static_site&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;python&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;generator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;py&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;build&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Running your freezer instance locally: &lt;/p&gt;
+&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;n&quot;&gt;polina&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;build&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;python&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mSimpleHTTPServer&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8001&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Serving&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;HTTP&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;on&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;port&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8001&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Pushing your static site to Github pages: &lt;/p&gt;
+&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;n&quot;&gt;polina&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;build&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;polina&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;build&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;commit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;adding blog post&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;master&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;78&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e2e97&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;adding&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blog&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;
+ &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;files&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;151&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;insertions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(+)&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;create&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mode&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100644&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blog&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setting&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;up&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;site&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;html&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;polina&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;build&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;push&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;origin&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Counting&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objects&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Delta&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;compression&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;up&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;threads&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Compressing&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objects&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Writing&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objects&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/6), 3.93 KiB | 0 bytes/s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delta&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reused&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delta&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;To&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;https&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;://&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;github&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/polinadotio/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;polinadotio&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;github&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;git&lt;/span&gt;
+   &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;abfa60&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;..&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;78&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e2e97&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;master&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;polina&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;build&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;$&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;</content>
+  </entry>
+  <entry xml:base="http://octocat-cafe.me/feed.atom">
+    <title type="text">My first pull request notes on getting started with open source</title>
+    <id>http://octocat-cafe.me/blog/my-first-pull-request.html</id>
+    <updated>2015-03-20T00:00:00Z</updated>
+    <published>2015-03-20T00:00:00Z</published>
+    <link href="http://octocat-cafe.me/blog/my-first-pull-request.html" />
+    <author>
+      <name>Polina Soshnin</name>
+    </author>
+    <content type="html">&lt;p&gt;Notes&lt;/p&gt;</content>
+  </entry>
+  <entry xml:base="http://octocat-cafe.me/feed.atom">
+    <title type="text">Learning iOS Development</title>
+    <id>http://octocat-cafe.me/blog/ios-dev-01.html</id>
+    <updated>2015-02-12T00:00:00Z</updated>
+    <published>2015-02-12T00:00:00Z</published>
+    <link href="http://octocat-cafe.me/blog/ios-dev-01.html" />
+    <author>
+      <name>Polina Soshnin</name>
+    </author>
+    <content type="html">&lt;p&gt;Taking steps to become an iOS developer.&lt;/p&gt;
+&lt;p&gt;Starting the bitfountain iOS 7 immersive course. This uses Xcode 5.1.1 and Objective C. I thought this would be beneficial because a lot of apps still use ObjC and some companies may even still be on 5.1.1 and I want to know what the differences are. &lt;/p&gt;
+&lt;p&gt;The phases for me are:&lt;/p&gt;
+&lt;p&gt;Phase 1: Self instruction&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Do Bitfountain courses on my own (iOS 7 and 8)&lt;/li&gt;
+&lt;li&gt;Go through Objective C Nerd Ranch book&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;--&amp;gt; get exposure to ObjC and multiple versions of Xcode. Blog about it. &lt;/p&gt;
+&lt;p&gt;Phase 2: Apprenticeship&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Enroll at Bloc and build several apps with the help of a senior developer&lt;/li&gt;
+&lt;li&gt;Network&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Phase 3: Interview for an entry level iOS developer gig&lt;/p&gt;</content>
+  </entry>
   <entry xml:base="http://octocat-cafe.me/feed.atom">
     <title type="text">A Short Guide to Email Spoofing</title>
     <id>http://octocat-cafe.me/blog/email-spoofing.html</id>
@@ -97,106 +221,5 @@ psoshnin@cs.wellesley.edu&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt
 
 &lt;p&gt;And there you have it. Note: you might need to check your spam folder. &lt;/p&gt;
 &lt;p&gt;&lt;img alt=&quot;Alt text&quot; src=&quot;/static/helloworld.png&quot; /&gt;&lt;/p&gt;</content>
-  </entry>
-  <entry xml:base="http://octocat-cafe.me/feed.atom">
-    <title type="text">Learning iOS Development</title>
-    <id>http://octocat-cafe.me/blog/ios-dev-01.html</id>
-    <updated>2014-03-15T00:00:00Z</updated>
-    <published>2014-03-15T00:00:00Z</published>
-    <link href="http://octocat-cafe.me/blog/ios-dev-01.html" />
-    <author>
-      <name>Polina Soshnin</name>
-    </author>
-    <content type="html">&lt;p&gt;Taking steps to become an iOS developer.&lt;/p&gt;
-&lt;p&gt;Starting the bitfountain iOS 7 immersive course. This uses Xcode 5.1.1 and Objective C. I thought this would be beneficial because a lot of apps still use ObjC and some companies may even still be on 5.1.1 and I want to know what the differences are. &lt;/p&gt;
-&lt;p&gt;The phases for me are:&lt;/p&gt;
-&lt;p&gt;Phase 1: Self instruction&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Do Bitfountain courses on my own (iOS 7 and 8)&lt;/li&gt;
-&lt;li&gt;Go through Objective C Nerd Ranch book&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;--&amp;gt; get exposure to ObjC and multiple versions of Xcode. Blog about it. &lt;/p&gt;
-&lt;p&gt;Phase 2: Apprenticeship&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Enroll at Bloc and build several apps with the help of a senior developer&lt;/li&gt;
-&lt;li&gt;Network&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Phase 3: Interview for an entry level iOS developer gig&lt;/p&gt;</content>
-  </entry>
-  <entry xml:base="http://octocat-cafe.me/feed.atom">
-    <title type="text">Creating a blogging site with Flask and Github Pages</title>
-    <id>http://octocat-cafe.me/blog/setting-up-this-site.html</id>
-    <updated>2014-03-15T00:00:00Z</updated>
-    <published>2014-03-15T00:00:00Z</published>
-    <link href="http://octocat-cafe.me/blog/setting-up-this-site.html" />
-    <author>
-      <name>Polina Soshnin</name>
-    </author>
-    <content type="html">&lt;p&gt;There are many ways to go about hosting a personal blog/landing page. One of my favorite is via Github pages. It's free and there are options just as Jekyl or Octopress to create an out of the box site for you. There's also the option of rolling your own to deploy on Github pages, which I'll touch on.&lt;/p&gt;
-&lt;p&gt;http://jekyllrb.com/&lt;/p&gt;
-&lt;p&gt;The one main thing you need to take into consideration when making a site for Github pages is that it needs to be a static site. This means the site is composed entirely of HTML, CSS, and JavaScript and it needs to be able to be hosted without any server-side software other than a traditional web server. There's no database you can hook into or Python code on the server side. So how would you go about this? At first it seems like you could just manually create all of your HTML/CSS/JS files yourself and then just commit them, but that's a pretty tedious endeavor and pretty disorganized.&lt;/p&gt;
-&lt;p&gt;What we need ideally is some way of gracefully handling two issues that web frameworks are meant to solve: routing and templates. In addition to that, we'll need to find a better way of generating these files and pushing the static content to Github. The reason using a web framework in general is a good idea is because they will handle HTTP reqeusts and responses for us, which will be handy. Some web frameworks also have certain architectual patterns built in as well, such as the MVC pattern in Django and Rails. &lt;/p&gt;
-&lt;p&gt;Routing and Templates&lt;/p&gt;
-&lt;p&gt;The two big issues that come when building a web application are: how do you map the requested URL from the browser to the code that handles it (routes), and how do we create HTML dynamically (templates)? Those are the two questions we'll need an answer to, and every web framework handles it slightly differenty. &lt;/p&gt;
-&lt;p&gt;That's where Flask comes in. Flask is a python microframework for developing web applications, and in my opinion it's a great way to play around with python and the web without having the overhead that comes with learning a heavyweight framework such as Rails or Django. Flask works like other Python web frameworks work: it receives HTTP requests, dispatches code that generates HTML, and creates an HTTP response with that content. This is how all major server-side frameworks work (excluding JavaScript frameworks).&lt;/p&gt;
-&lt;p&gt;Flask handles routes by hooking up a function to a requested URL via a route() decorator. Here's an example of routing to the base URL:&lt;/p&gt;
-&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;&amp;#39;/&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;#&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;base&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;URL&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;render_template&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;posts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blog&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;posts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Flask also lets you create dynamic URLs:&lt;/p&gt;
-&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;err&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;blog&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blog&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_post_or_404&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;render_template&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;That solves our routing issue. Next up, Flask uses Jinja2 for templating. One great thing about Jinja2 is that it will cache your templates so that subsequent requests with the exact same arguments are returned from the cache instead of re-rendered. &lt;/p&gt;
-&lt;p&gt;Flask lets us create a site without having to worry about routing or templating, but what about generating static content? We will need to a way to make a &quot;static site generator&quot;. Many of those exist, you can take a look at them here:&lt;/p&gt;
-&lt;p&gt;https://www.staticgen.com/&lt;/p&gt;
-&lt;p&gt;But we want a way to generate our own set of files from Flask. Can we do it? Yes!&lt;/p&gt;
-&lt;p&gt;Frozen Flask, http://pythonhosted.org/Frozen-Flask/ is a Flask extension that &quot;freezes&quot; your flask application into a set of static files. The purpose of my application will be to show a list of blog posts and a little bit about me on the home page. Flask is very flexible when it comes to structuring files, so here's how I went ahead and initially organized them:&lt;/p&gt;
-&lt;p&gt;blogging-site
-    /build 
-        #this is my build directly where I'm storing my Freezer() instance of my flask app and pushing this to github pages
-    /posts
-        #this is where my posts will be stored, in markdown
-    /static
-        #where my CSS files live
-    /templates
-        #where my HTML templates live
-    CNAME #place to put my IP address for my site
-    generator.py 
-    #the python file that will show my routes, Flask instance, and generate my static files 
-    + plus any additional python files for adding functionality&lt;/p&gt;
-&lt;p&gt;It's pretty simple. If you take a look at the file structure of a Rails app, it's much much more complicated. I found when first learning about web development it was a easier to start off with something like Flask to get a better understanding of the kind of functionality that needs to go into a web application before diving into the Rails file structure. &lt;/p&gt;
-&lt;p&gt;Notes:&lt;/p&gt;
-&lt;p&gt;Running Flask locally: 
-    polina: static_site *$ python generator.py
-    * Running on http://127.0.0.1:8000/&lt;/p&gt;
-&lt;p&gt;Generating your Frozen instance:
-    polina: static_site *$ python generator.py build&lt;/p&gt;
-&lt;p&gt;Running your freezer instance locally: 
-    polina: build (master)*$ python -mSimpleHTTPServer 8001
-    Serving HTTP on 0.0.0.0 port 8001 ...&lt;/p&gt;
-&lt;p&gt;Pushing your static site to Github pages: &lt;/p&gt;
-&lt;div class=&quot;codehilite&quot;&gt;&lt;pre&gt;&lt;span class=&quot;n&quot;&gt;polina&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;build&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;polina&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;build&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;commit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;adding blog post&amp;quot;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;master&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;78&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e2e97&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;adding&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blog&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;
- &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;files&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;151&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;insertions&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(+)&lt;/span&gt;
- &lt;span class=&quot;n&quot;&gt;create&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mode&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100644&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;blog&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setting&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;up&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;site&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;html&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;polina&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;build&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;git&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;push&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;origin&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Counting&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objects&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Delta&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;compression&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;up&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;to&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;threads&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Compressing&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objects&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Writing&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objects&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/6), 3.93 KiB | 0 bytes/s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;done&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;Total&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delta&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reused&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;delta&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;To&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;https&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;://&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;github&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;com&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/polinadotio/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;polinadotio&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;github&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;io&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;git&lt;/span&gt;
-   &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;abfa60&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;..&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;78&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;e2e97&lt;/span&gt;  &lt;span class=&quot;n&quot;&gt;master&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;polina&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;build&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;$&lt;/span&gt;
-&lt;/pre&gt;&lt;/div&gt;</content>
   </entry>
 </feed>

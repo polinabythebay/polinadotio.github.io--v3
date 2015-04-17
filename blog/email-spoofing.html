@@ -1,13 +1,16 @@
 <html>	
 
 <head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 	
 
 <title>A Short Guide to Email Spoofing  </title>
 
 <!-- Stylesheets -->
-	<link rel="stylesheet" href="/static/css/post.css">
+	<!-- <link rel="stylesheet" href="/static/css/post.css"> -->
+	<link rel="stylesheet" href="/static/css/blog.css">
 
 
 
@@ -16,8 +19,11 @@
 	<link rel="icon" href="static/favicon.ico" type="image/x-icon">
 
 	<!-- Stylesheets -->
-	<link rel="stylesheet" href="/static/css/base.css">
+	<!-- <link rel="stylesheet" href="/static/css/base.css"> -->
 	<link rel="stylesheet" href="/static/css/syntax.css">
+	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+	<link rel="stylesheet" href="/static/css/blog.css">
 
 	<!-- Atom Feed -->
 	<link href="/feed.atom"
@@ -30,15 +36,47 @@
 <body>
 
 
-	<!-- Header -->
-	<div id="header">
-		<h1> A Short Guide to Email Spoofing</h1>
-			
-		<h3 id="date"> March 15, 2014</h3>
-	</div>
-	<!-- Content -->
-	<div id="content">
-		<p>This is a fun trick I learned that uses a few basic networking concepts. I didn't realize how easy it was to send spoof email via command line. Here's how:</p>
+<!-- <div id="content">
+		
+	</div> -->
+
+
+<div id="layout" class="pure-g">
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+        <div class="header">
+            <h1 class="brand-title"></h1>
+            <h2 class="brand-tagline">Polina Soshnin</h2>
+
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a class="pure-button" href="/">Posts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="pure-button" href="/">Projects</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+    
+
+
+	<div class="content pure-u-1 pure-u-md-3-4">
+        <div>
+			<section class="post">
+			    <header class="post-header">
+			      
+			        <h2 class="post-title">A Short Guide to Email Spoofing</h2>
+
+			        <p class="post-meta">
+			          March 15, 2014
+			        </p>
+			    </header>
+
+			    <div class="post-description">
+			        <p>This is a fun trick I learned that uses a few basic networking concepts. I didn't realize how easy it was to send spoof email via command line. Here's how:</p>
 <h4>Basic idea:</h4>
 <p>Establish a TCP connection to a mail server and use SMTP commands to send email from "anyone" to "anyone". :) You'll see what I mean. </p>
 <h4>Concepts:</h4>
@@ -120,8 +158,23 @@ psoshnin@cs.wellesley.edu<span class="err">&#39;</span>s password:
 
 <p>And there you have it. Note: you might need to check your spam folder. </p>
 <p><img alt="Alt text" src="/static/helloworld.png" /></p>
-	</div>
+			    </div>
+			</section>
+ 		</div>
+    </div>
 
+
+
+
+			<div class="footer">
+			<div class="pure-menu pure-menu-horizontal">
+			    <ul>
+			        <li class="pure-menu-item"><a href="http://purecss.io/" class="pure-menu-link">About</a></li>
+			        <li class="pure-menu-item"><a href="http://twitter.com/yuilibrary/" class="pure-menu-link">Twitter</a></li>
+			        <li class="pure-menu-item"><a href="http://github.com/yahoo/pure/" class="pure-menu-link">GitHub</a></li>
+			    </ul>
+			</div>
+			</div>
 
 </body>
 
